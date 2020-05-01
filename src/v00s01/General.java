@@ -9,12 +9,12 @@ public class General {
 	
 	public static String getInput(String inMessage) {
 		// Asks for a string input and returns it
-		String result = "ERROR";
-		Scanner in = new Scanner(System.in);
-		System.out.print(inMessage);
-		if (in.hasNext()) {
-			result = in.next();
-			in.close();
+		String result = "ERROR";									// Default result, if this gets returned something went wrong
+		Scanner in = new Scanner(System.in);						// Create instance of Scanner
+		System.out.print(inMessage);								// Message output (given String)
+		if (in.hasNext()) {											// Ask for input from Scanner
+			result = in.next();										// Get String
+			in.close();												// Close Scanner instance
 		}
 		return result;
 	}
