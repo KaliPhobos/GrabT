@@ -34,29 +34,43 @@ public class General {
 		// Returns a list of any files and folders inside a directory.
 		// Scans any file & folder, adding found sub-folders to a ToDo-List.
 		// Recursively repeats the process with any ToDo-List item until no more sub-folders remain untouched.
-		int c_folders = 0;											// counter for the currently processed item in the ToDo-List
-		List<File> allFiles = new ArrayList<File>();				// Protocol of any file that was found
-		List<String> folders = new ArrayList<String>();				// ToDo-List
-		folders.add(FixBackslashes(path));							// Select directory as first item on ToDo-List
+		
+		// counter for the currently processed item in the ToDo-List
+		int c_folders = 0;
+		// Protocol of any file that was found
+		List<File> allFiles = new ArrayList<File>();
+		// ToDo-List
+		List<String> folders = new ArrayList<String>();
+		// Select directory as first item on ToDo-List
+		folders.add(FixBackslashes(path));
 		System.out.println("----------");
-		while (c_folders < folders.size()) {						// Loops through ToDo-List items
+		// Loops through ToDo-List items
+		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
 			System.out.println("+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
 			File folder = new File(path);
-			File[] listOfFiles = folder.listFiles();				// Scan top level folder
-			if(listOfFiles!=null) {									// Start working through contents of top level folder
-				for (int i = 0; i < listOfFiles.length; i++) {		// Scan through content
-					if (listOfFiles[i].isDirectory()) {				// Found Folder
-						path = FixBackslashes(path);				// Add optional '\\' to path
+			// Scan top level folder
+			File[] listOfFiles = folder.listFiles();
+			// Start working through contents of top level folder
+			if(listOfFiles!=null) {
+				// Scan through content
+				for (int i = 0; i < listOfFiles.length; i++) {
+					// Found Folder
+					if (listOfFiles[i].isDirectory()) {
+						// Add optional '\\' to path
+						path = FixBackslashes(path);
 						System.out.println("|+"+listOfFiles[i].getPath() + "(folder #" + (folders.size()+1) + ")");
-						folders.add(listOfFiles[i].getPath());		// Add folder to ToDo-List for later
+						// Add folder to ToDo-List for later
+						folders.add(listOfFiles[i].getPath());
 					} else {
-				    	allFiles.add(listOfFiles[i]);				// Found File - add it to list
+						// Found File - add it to list
+				    	allFiles.add(listOfFiles[i]);
 						System.out.println("|-"+listOfFiles[i].getPath());
 				   	}
 				}
 			}
-			c_folders++;											// jump to next item on the list
+			// jump to next item on the list
+			c_folders++;
 		}
 		if(c_folders!=allFiles.size()) { System.out.println("ERROR, File count does not match");}
 		System.out.println("\nScanned a total of "+c_folders+" folders and files");
@@ -70,5 +84,27 @@ public class General {
 		// Adds '\\' at the end of a String in case it'S not already there (fixing file paths)
 		inPath = (inPath.endsWith("\\")) ? inPath : inPath+"\\";
 		return inPath;
+	}
+	
+	public static String FormatSize(double size) {
+		// Formats file sizes in a nice way you can actually work with
+		String result;
+		if (size<1000) {
+			result = (int) size+" Byte";
+		} else if(size<1000000) {
+			result = (((double) Math.round(size/10))/100)+"KB";
+		} else if(size<1000000000) {
+			result = (((double) Math.round(size/10000))/100)+"MB";
+		} else if(size<1000000000000.0) {
+			result = (((double) Math.round(size/10000000))/100)+"GB";
+		} else if(size<1000000000000000.0) {
+			result = (((double) Math.round(size/10000000000.0))/100)+"TB";
+		} else if(size<1000000000000000000.0) {
+			result = (((double) Math.round(size/10000000000000.0))/100)+"PB";
+		} else {
+			// No man should ever go there...
+			result = "fuck you";
+		}
+		return result;
 	}
 }
