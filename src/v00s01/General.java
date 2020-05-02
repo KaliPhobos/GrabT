@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 public class General {
 	
+	// Asks for a string input and returns it
 	public static String getInput(String inMessage) {
-		// Asks for a string input and returns it
 		String result = "ERROR";									// Default result, if this gets returned something went wrong
 		Scanner in = new Scanner(System.in);						// Create instance of Scanner
 		System.out.print(inMessage);								// Message output (given String)
@@ -19,41 +19,63 @@ public class General {
 		return result;
 	}
 	
-	public static String[][] getFileNames(String inPath) {
-		// Creates an array containing absolute path and name for every file in a given directory
-		List<File> allFiles = loadFiles(inPath);					// retrieve file list
-		String[][] FullNames = new String[allFiles.size()][2];		// create array 2x?
-		for (int i = 0; i < allFiles.size(); i++) {					// Fill array
-			FullNames[i][0] = allFiles.get(i).getPath();			// Extract absolute path
-			FullNames[i][1] = allFiles.get(i).getName();			// Extract actual name & ending
+	// Loops through separate files linked in a given folder array, analyzing them
+	public static void Analyze(DirectoryInfo[] inFolders) {
+		// retrieve file list
+		DirectoryInfo[] Folders = inFolders;
+		DirectoryInfo Folder;
+		FileInfo[] Files;
+		FileInfo File;
+		// Going through all folder elements
+		for (int c_Folder = 0; c_Folder<Folders.length; c_Folder++) {
+			Folder = Folders[c_Folder];
+			Files = Folder.getChildren();
+			// Going through all file elements
+			for (int c_File = 0; c_File<Files.length; c_File++) {
+				// Get the current file
+				File = Files[c_File];
+				System.out.println("File: " + File.getName() + " in folder: " + Folder.getName());
+				// DO FANCY STUFF HERE
+			}
+
 		}
-		return FullNames;
 	}
 	
-	public static List<File> loadFiles(String path) {
-		// Returns a list of any files and folders inside a directory.
-		// Scans any file & folder, adding found sub-folders to a ToDo-List.
-		// Recursively repeats the process with any ToDo-List item until no more sub-folders remain untouched.
-		
+	
+	// Returns a list of any sub-folders inside a directory, each having child elements for contained files.
+	// Scans any file & folder, adding found sub-folders to a ToDo-List.
+	// Recursively repeats the process with any ToDo-List item until no more sub-folders remain untouched.
+	public static List<DirectoryInfo> getFolderArray(String inPath) {
 		// counter for the currently processed item in the ToDo-List
 		int c_folders = 0;
 		// Protocol of any file that was found
 		List<File> allFiles = new ArrayList<File>();
 		// ToDo-List
 		List<String> folders = new ArrayList<String>();
+		
+		// List holding all results
+		List<DirectoryInfo> result = new ArrayList<DirectoryInfo>();
+		
 		// Select directory as first item on ToDo-List
-		folders.add(FixBackslashes(path));
+		folders.add(FixBackslashes(inPath));
+		// currently processed path
+		String path = inPath;
 		System.out.println("----------");
 		// Loops through ToDo-List items
 		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
 			System.out.println("+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
 			File folder = new File(path);
-			// Scan top level folder
+			// Scan current folder
 			File[] listOfFiles = folder.listFiles();
-			// Start working through contents of top level folder
+			// Start working through contents of the folder (if not empty)
 			if(listOfFiles!=null) {
 				// Scan through content
+				
+				// CREATE FOLDER ELEMENT
+				
+				
+				
 				for (int i = 0; i < listOfFiles.length; i++) {
 					// Found Folder
 					if (listOfFiles[i].isDirectory()) {
@@ -65,6 +87,9 @@ public class General {
 					} else {
 						// Found File - add it to list
 				    	allFiles.add(listOfFiles[i]);
+				    	
+				    	// APPEND FILEINFO CHILD
+				    	
 						System.out.println("|-"+listOfFiles[i].getPath());
 				   	}
 				}
@@ -80,14 +105,14 @@ public class General {
 		return allFiles;
 	}
 	
+	// Adds '\\' at the end of a String in case it'S not already there (fixing file paths)
 	public static String FixBackslashes(String inPath) {
-		// Adds '\\' at the end of a String in case it'S not already there (fixing file paths)
 		inPath = (inPath.endsWith("\\")) ? inPath : inPath+"\\";
 		return inPath;
 	}
 	
+	// Formats file sizes in a nice way you can actually work with
 	public static String FormatSize(double size) {
-		// Formats file sizes in a nice way you can actually work with
 		String result;
 		if (size<1000) {
 			result = (int) size+" Byte";

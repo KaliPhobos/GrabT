@@ -8,9 +8,9 @@ public class main {
 		System.out.println("Please pick directory (for example 'E:\\Files\\')");
 		TargetDir = General.getInput("Directory: ");
 		
-		String[][] names = General.getFileNames(TargetDir);
+		DirectoryInfo[] Folders = General.getFolderArray(TargetDir);
+		General.Analyze(Folders);
 	}
-	
 	
 
 }

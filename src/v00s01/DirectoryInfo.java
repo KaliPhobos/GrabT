@@ -2,6 +2,11 @@ package v00s01;
 
 // Class providing info on a directory
 public class DirectoryInfo {
+	
+	public DirectoryInfo AddDirectory(String inPath, String inName) {
+		
+	}
+	
 	// The path to the folder without the path or folder name
 	public String basePath;
 	
@@ -9,14 +14,14 @@ public class DirectoryInfo {
 	public String folderName;
 	
 	// The children file objects
-	public FileInfo[] children;
+	private FileInfo[] children;
 	
 	// The average score in this folder
 	public int score;
 	
 	// The highest file score in this folder 
-	public int topScore;
-	
+	public double topScore;
+		
 	// Recalculates the scores
 	public void CalculateScores()
 	{
@@ -30,7 +35,7 @@ public class DirectoryInfo {
 		for (int i = 0; i < children.length; i++)
 		{
 			// Fetch the child score
-			int childScore = children[i].score;
+			double childScore = children[i].getScore();
 			
 			// Update the average counter
 			scoreCounter += childScore;
@@ -42,5 +47,21 @@ public class DirectoryInfo {
 		
 		// Calculate the average
 		score = (int)(scoreCounter / children.length);
+	}
+	
+	public FileInfo[] getChildren() {
+		return children;
+	}
+	
+	public FileInfo getChild(int inID) {
+		return children[inID];
+	}
+	
+	public String getName() {
+		return folderName;
+	}
+	
+	public String getFullName() {
+		return basePath+"\\"+folderName;
 	}
 }
