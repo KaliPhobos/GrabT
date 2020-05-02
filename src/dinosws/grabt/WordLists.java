@@ -10,13 +10,13 @@ public class WordLists {
 	// The words whitelist adding points
 	private static final WordScore whiteList[] = {
 		new WordScore("password", WordPosition.Contained, false, 2, 1, 0),
-		new WordScore("Thumbs.db", WordPosition.FullFile, true, 1, 1, 100)
+		new WordScore("Thumbs.db", WordPosition.FullFile, true, false, 1, 1, 100)
 	};
 	
 	// The words blacklist subtracting points
 	private static final WordScore blackList[] = {
 		new WordScore(".gitignore", WordPosition.FullFile, false, 1, 2, -10),
-		new WordScore(".lnk", WordPosition.EndFile, false, 0, 1, 0) // Zero the score for any shortcuts
+		new WordScore(".lnk", WordPosition.EndFile, false, false, 0, 1, 0) // Zero the score for any shortcuts
 	};
 	
 	// Adjusts the given score based on the installed wordlists
@@ -59,8 +59,7 @@ public class WordLists {
 				// Fetch the current word
 				WordScore currentWord = currentList[listIndex];
 				
-				// Create a modification flag and choose the right strings
-				boolean modify = false;
+				// Choose the right strings
 				String needleString = currentWord.exact ? currentWord.word : currentWord.word.toLowerCase(),
 						haystackString = "";
 				
@@ -98,54 +97,64 @@ public class WordLists {
 					continue;
 				}
 				
+				// Create a modification flag
+				boolean modify = false;
+				
 				// Switch the operation type next
 				switch(currentWord.position) {
 				case Contained:
 				case ContainedDirectory:
 				case ContainedFile:
 					// Haystack must contain needle
-					if (!haystackString.contains(needleString))
-						continue;
+					if (haystackString.contains(needleString))
+						modify = true;
 					break;
 					
 				case End:
 				case EndDirectory:
 				case EndFile:
 					// Haystack must end in needle
-					if (!haystackString.endsWith(needleString))
-						continue;
+					if (haystackString.endsWith(needleString))
+						modify = true;
 					break;
 					
 				case Full:
 				case FullDirectory:
 				case FullFile:
 					// Haystack must be equal to needle
-					if (!haystackString.equals(needleString))
-						continue;
+					if (haystackString.equals(needleString))
+						modify = true;
 					break;
 					
 				case Middle:
 				case MiddleDirectory:
 				case MiddleFile:
 					// Haystack must contain needle (not touching the first or last character) 
-					if (!haystackString.contains(needleString) ||
-						haystackString.startsWith(needleString) ||
-						haystackString.endsWith(needleString))
-						continue;
+					if (haystackString.contains(needleString) &&
+						!haystackString.startsWith(needleString) &&
+						!haystackString.endsWith(needleString))
+						modify = true;
 					break;
 					
 				case Start:
 				case StartDirectory:
 				case StartFile:
 					// Haystack must start with needle
-					if (!haystackString.startsWith(needleString))
-						continue;
+					if (haystackString.startsWith(needleString))
+						modify = true;
 					break;
 					
 				default:
 					// Skip invalid entries (should never be here)
 					continue;
 				}
+				
+				// Check, if inversion is required
+				modify = !modify;
+				
+				// Check, if modification to the score is required
+				if (!modify)
+					continue;
 				
 				// Fallthrough is a match, so apply the score
 				score *= currentWord.multiplier;
