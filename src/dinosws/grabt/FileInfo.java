@@ -1,4 +1,6 @@
-package v00s01;
+package dinosws.grabt;
+
+import java.nio.file.Paths;
 
 // Class providing info on a file
 public class FileInfo {
@@ -12,18 +14,13 @@ public class FileInfo {
 		this.isCopied = false;
 	}
 	
-	public static FileInfo createFile(String inName, long inSize) {
-		// Constructor for DirectoryInfo
-		return new FileInfo(inName, inSize);
-	}
-	
 	// The filename without the path
 	private String fileName;
 	
 	// The file size
 	private long fileSize;
 	
-	// The file score.
+	// The file score
 	private int score;
 	
 	// The general mime group
@@ -35,16 +32,27 @@ public class FileInfo {
 	// Indicates, whether the file has been copied
 	private boolean isCopied;
 	
-	// Recalculates the score
-	public void calculateScore() {
-		
-	}
-	
 	public String getName() {
 		return fileName;
 	}
 	
+	// Returns the full path to the file based on the parent directory path
+	public String getFullPath(DirectoryInfo parentDir) {
+		// Get the path of the parent directory
+		String parentPath = parentDir == null ?
+				Paths.get(".").toAbsolutePath().toString() :
+				parentDir.getFullPath();
+				
+		// Assemble and return the path
+		return Paths.get(parentPath, fileName).toString();
+	}
+	
 	public int getScore() {
 		return score;
+	}
+	
+	// Recalculates the score
+	public void calculateScore() {
+		
 	}
 }
