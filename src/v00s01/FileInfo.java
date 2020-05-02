@@ -6,7 +6,7 @@ public class FileInfo {
 	public FileInfo(String inName, long inSize) {
 		this.fileName = inName;
 		this.fileSize = inSize;
-		this.score = 0.0;
+		this.score = 0;
 		this.mimeType = "";
 		this.mimeSubtype = "";
 		this.isCopied = false;
@@ -24,7 +24,7 @@ public class FileInfo {
 	private long fileSize;
 	
 	// The file score.
-	private double score;
+	private int score;
 	
 	// The general mime group
 	private String mimeType;
@@ -35,11 +35,16 @@ public class FileInfo {
 	// Indicates, whether the file has been copied
 	private boolean isCopied;
 	
+	// Recalculates the score
+	public void calculateScore() {
+		
+	}
+	
 	public String getName() {
 		return fileName;
 	}
 	
-	public double getScore() {
+	public int getScore() {
 		return score;
 	}
 }
