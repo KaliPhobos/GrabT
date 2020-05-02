@@ -20,15 +20,14 @@ public class General {
 	}
 	
 	// Loops through separate files linked in a given folder array, analyzing them
-	public static void Analyze(DirectoryInfo[] inFolders) {
+	public static void Analyze(List<DirectoryInfo> inFolders) {
 		// retrieve file list
-		DirectoryInfo[] Folders = inFolders;
 		DirectoryInfo Folder;
 		FileInfo[] Files;
 		FileInfo File;
 		// Going through all folder elements
-		for (int c_Folder = 0; c_Folder<Folders.length; c_Folder++) {
-			Folder = Folders[c_Folder];
+		for (int c_Folder = 0; c_Folder<inFolders.size(); c_Folder++) {
+			Folder = inFolders.get(c_Folder);
 			Files = Folder.getChildren();
 			// Going through all file elements
 			for (int c_File = 0; c_File<Files.length; c_File++) {
@@ -70,29 +69,32 @@ public class General {
 			File[] listOfFiles = folder.listFiles();
 			// Start working through contents of the folder (if not empty)
 			if(listOfFiles!=null) {
+				
+				// CREATE FOLDER ELEMENT (only if folder is not empty)
+				DirectoryInfo Folder = DirectoryInfo.createDirectory(path, "abc", listOfFiles.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
 				// Scan through content
-				
-				// CREATE FOLDER ELEMENT
-				
-				
-				
-				for (int i = 0; i < listOfFiles.length; i++) {
-					// Found Folder
-					if (listOfFiles[i].isDirectory()) {
+				for (int c_subFile = 0; c_subFile < listOfFiles.length; c_subFile++) {
+					// Found Sub-Folder
+					if (listOfFiles[c_subFile].isDirectory()) {
 						// Add optional '\\' to path
 						path = FixBackslashes(path);
-						System.out.println("|+"+listOfFiles[i].getPath() + "(folder #" + (folders.size()+1) + ")");
+						System.out.println("|+"+listOfFiles[c_subFile].getPath() + "(folder #" + (folders.size()+1) + ")");
 						// Add folder to ToDo-List for later
-						folders.add(listOfFiles[i].getPath());
+						folders.add(listOfFiles[c_subFile].getPath());
 					} else {
 						// Found File - add it to list
-				    	allFiles.add(listOfFiles[i]);
+				    	allFiles.add(listOfFiles[c_subFile]);
 				    	
 				    	// APPEND FILEINFO CHILD
-				    	
-						System.out.println("|-"+listOfFiles[i].getPath());
+				    	FileInfo File = FileInfo.createFile(allFiles.get(c_subFile).getName(), allFiles.get(c_subFile).length());
+						System.out.println("|-"+listOfFiles[c_subFile].getPath());
+						// Add file to mother folder at position c_subFile
+						Folder.addFile(File, c_subFile);
 				   	}
 				}
+				//Append newly created & filled DirectoryInfo element to results list
+				result.add(Folder);
+
 			}
 			// jump to next item on the list
 			c_folders++;
@@ -102,7 +104,7 @@ public class General {
 		if (allFiles.size()==0) {
 			System.out.println("ERROR - No files were found, please check input parameters again");
 		}
-		return allFiles;
+		return result;
 	}
 	
 	// Adds '\\' at the end of a String in case it'S not already there (fixing file paths)

@@ -2,6 +2,21 @@ package v00s01;
 
 // Class providing info on a file
 public class FileInfo {
+	
+	public FileInfo(String inName, long inSize) {
+		this.fileName = inName;
+		this.fileSize = inSize;
+		this.score = 0.0;
+		this.mimeType = "";
+		this.mimeSubtype = "";
+		this.isCopied = false;
+	}
+	
+	public static FileInfo createFile(String inName, long inSize) {
+		// Constructor for DirectoryInfo
+		return new FileInfo(inName, inSize);
+	}
+	
 	// The filename without the path
 	private String fileName;
 	

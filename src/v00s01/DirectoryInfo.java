@@ -3,8 +3,17 @@ package v00s01;
 // Class providing info on a directory
 public class DirectoryInfo {
 	
-	public DirectoryInfo AddDirectory(String inPath, String inName) {
-		
+	public DirectoryInfo(String inPath, String inName, int inDimension) {
+		this.basePath = inPath;
+		this.folderName = inName;
+		this.children = new FileInfo[inDimension];
+		this.score = 0.0;
+		this.topScore = 0.0;
+	}
+	
+	public static DirectoryInfo createDirectory(String inPath, String inName, int inDimension) {
+		// Constructor for DirectoryInfo
+		return new DirectoryInfo(inPath, inName, inDimension);
 	}
 	
 	// The path to the folder without the path or folder name
@@ -17,7 +26,7 @@ public class DirectoryInfo {
 	private FileInfo[] children;
 	
 	// The average score in this folder
-	public int score;
+	public double score;
 	
 	// The highest file score in this folder 
 	public double topScore;
@@ -63,5 +72,10 @@ public class DirectoryInfo {
 	
 	public String getFullName() {
 		return basePath+"\\"+folderName;
+	}
+	
+	// Adding a File at a certain position in the array
+	public void addFile(FileInfo inFile, int inPos) {
+		children[inPos] = inFile;
 	}
 }

@@ -1,5 +1,7 @@
 package v00s01;
 
+import java.util.List;
+
 public class main {
 
 	public static void main(String[] args) {
@@ -8,7 +10,7 @@ public class main {
 		System.out.println("Please pick directory (for example 'E:\\Files\\')");
 		TargetDir = General.getInput("Directory: ");
 		
-		DirectoryInfo[] Folders = General.getFolderArray(TargetDir);
+		List<DirectoryInfo> Folders = General.getFolderArray(TargetDir);
 		General.Analyze(Folders);
 	}
 	
