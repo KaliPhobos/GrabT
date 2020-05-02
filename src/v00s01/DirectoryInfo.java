@@ -74,7 +74,7 @@ public class DirectoryInfo {
 				}
 				
 				// Append the current item to the top of the list
-				targetList.add(children.get(j));
+				targetList.add(item);
 			}
 			
 			// After each round, update the top score counters
