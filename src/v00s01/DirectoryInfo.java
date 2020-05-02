@@ -13,7 +13,7 @@ public class DirectoryInfo {
 		// Copy the values
 		this.folderName = folderName;
 		this.basePath = basePath;
-		this.fullPath = Paths.get(this.basePath, folderName).toString();
+		this.fullPath = Paths.get(basePath, folderName).toString();
 		this.children = new ArrayList<FileInfo>(dimension);
 		this.score = 0;
 		this.topScore = 0;
@@ -128,7 +128,7 @@ public class DirectoryInfo {
 	public FileInfo getChild(int index) {
 		// Validate the input
 		if (!childExists(index))
-			throw new IllegalArgumentException("index out of range");
+			throw new IllegalArgumentException("index is out of bounds");
 		
 		// Return the item
 		return children.get(index);
