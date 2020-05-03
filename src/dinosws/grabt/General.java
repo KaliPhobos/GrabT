@@ -1,6 +1,7 @@
 package dinosws.grabt;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -45,26 +46,24 @@ public class General {
 	// Scans any file & folder, adding found sub-folders to a ToDo-List.
 	// Recursively repeats the process with any ToDo-List item until no more sub-folders remain untouched.
 	public static List<DirectoryInfo> getFolderArray(String inPath) {
-		// counter for the currently processed item in the ToDo-List
+		// 'List<String> folders' is a ToDo-List of discovered folders which are yet to be scanned.
+		// It's default value is just the given input path 'inPath'.
+		// All found items are then logged in 'listOfItems[]' with the counter 'c_subItem'.
+		// Found folders will be added to 'List<String> folders' again, files to 'List<File> allFiles'.
+		// While 'c_subFolders' counts found sub-folders, 'c_subFiles' does the same for actual files.
+		// A 'DirectoryInfo Folder' will be created for every scanned Folder and logged in 'List<DirectoryInfo> result'.
+		// As a result, 'FileInfo' items will be created for every sub-file and added to 'DirectoryInfo Folder'.
+		// As soon as all 'FileInfo' items are added, 'List<DirectoryInfo> result' will be returned.
 		int c_folders = 0;
-		// Protocol of any file that was found
 		List<File> allFiles = new ArrayList<File>();
-		// ToDo-List
 		List<String> folders = new ArrayList<String>();
-		
-		// List holding all results
 		List<DirectoryInfo> result = new ArrayList<DirectoryInfo>();
-		
-		// Select directory as first item on ToDo-List
 		folders.add(FixBackslashes(inPath));
-		// currently processed path
 		String path = inPath;
 		System.out.println("----------");
-		// Counts actual files found in the process
+		// set counters to 0
 		int c_subFile = 0;
-		// Same counter but for folders
 		int c_subFolder = 0;
-		// Loops through ToDo-List items
 		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
 			System.out.println("+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
@@ -73,19 +72,16 @@ public class General {
 			File[] listOfItems = folder.listFiles();
 			// Start working through contents of the folder (if not empty)
 			if(listOfItems!=null) {
-				
 				// CREATE FOLDER ELEMENT (only if folder is not empty)
 				DirectoryInfo Folder = new DirectoryInfo("foldername", path, listOfItems.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
-				// Scan through content
 				for (int c_subItem = 0; c_subItem < listOfItems.length; c_subItem++) {
-					// Found Sub-Folder
 					if (listOfItems[c_subItem].isDirectory()) {
-//						System.out.println("folder number "+c_subFolder);
-						// Add optional '\\' to path
-						path = FixBackslashes(path);
-						System.out.println("|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
-						// Add folder to ToDo-List for later
+						// Found folder - add it to list
 						folders.add(listOfItems[c_subItem].getPath());
+
+						// Command line output
+						System.out.println("|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
+						
 						// Increase folder count
 						c_subFolder++;
 					} else {
@@ -107,7 +103,6 @@ public class General {
 				}
 				//Append newly created & filled DirectoryInfo element to results list
 				result.add(Folder);
-
 			}
 			// jump to next item on the list
 			c_folders++;
