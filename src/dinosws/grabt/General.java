@@ -23,16 +23,16 @@ public class General {
 	public static void Analyze(List<DirectoryInfo> inFolders) {
 		// retrieve file list
 		DirectoryInfo Folder;
-		FileInfo[] Files;
+		ArrayList<FileInfo> Files;
 		FileInfo File;
 		// Going through all folder elements
 		for (int c_Folder = 0; c_Folder<inFolders.size(); c_Folder++) {
 			Folder = inFolders.get(c_Folder);
 			Files = Folder.getChildren();
 			// Going through all file elements
-			for (int c_File = 0; c_File<Files.length; c_File++) {
+			for (int c_File = 0; c_File<Files.size(); c_File++) {
 				// Get the current file
-				File = Files[c_File];
+				File = Files.get(c_File);
 				System.out.println("File: " + File.getName() + " in folder: " + Folder.getName());
 				// DO FANCY STUFF HERE
 			}
@@ -71,7 +71,7 @@ public class General {
 			if(listOfFiles!=null) {
 				
 				// CREATE FOLDER ELEMENT (only if folder is not empty)
-				DirectoryInfo Folder = DirectoryInfo.createDirectory(path, "abc", listOfFiles.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
+				DirectoryInfo Folder = new DirectoryInfo(path, "abc", listOfFiles.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
 				// Scan through content
 				for (int c_subFile = 0; c_subFile < listOfFiles.length; c_subFile++) {
 					// Found Sub-Folder
@@ -86,10 +86,10 @@ public class General {
 				    	allFiles.add(listOfFiles[c_subFile]);
 				    	
 				    	// APPEND FILEINFO CHILD
-				    	FileInfo File = FileInfo.createFile(allFiles.get(c_subFile).getName(), allFiles.get(c_subFile).length());
+				    	FileInfo File = new FileInfo(allFiles.get(c_subFile).getName(), allFiles.get(c_subFile).length());
 						System.out.println("|-"+listOfFiles[c_subFile].getPath());
-						// Add file to mother folder at position c_subFile
-						Folder.addFile(File, c_subFile);
+						// Add file to mother folder
+						Folder.addChild(File);
 				   	}
 				}
 				//Append newly created & filled DirectoryInfo element to results list

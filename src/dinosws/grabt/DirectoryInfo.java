@@ -14,7 +14,7 @@ public class DirectoryInfo {
 		this.folderName = folderName;
 		this.basePath = basePath;
 		this.fullPath = Paths.get(basePath, folderName).toString();
-		this.children = new ArrayList<FileInfo>(dimension);
+		this.children = new ArrayList<FileInfo>(dimension);				// TODO: slightly too large, decrease by the number of subfolders
 		this.score = 0;
 		this.topScore = 0;
 	}
@@ -134,6 +134,10 @@ public class DirectoryInfo {
 		return children.get(index);
 	}
 	
+	public ArrayList<FileInfo> getChildren() {
+		return children;
+	}
+	
 	// Returns the number of child elements in the internal list
 	public int getChildCount() {
 		return children.size();
@@ -150,7 +154,7 @@ public class DirectoryInfo {
 	}
 	
 	// Clears the internal list
-	public void removeChilds()
+	public void removeChildren()
 	{
 		children.clear();
 	}
