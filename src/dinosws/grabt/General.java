@@ -60,36 +60,49 @@ public class General {
 		// currently processed path
 		String path = inPath;
 		System.out.println("----------");
+		// Counts actual files found in the process
+		int c_subFile = 0;
+		// Same counter but for folders
+		int c_subFolder = 0;
 		// Loops through ToDo-List items
 		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
 			System.out.println("+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
 			File folder = new File(path);
 			// Scan current folder
-			File[] listOfFiles = folder.listFiles();
+			File[] listOfItems = folder.listFiles();
 			// Start working through contents of the folder (if not empty)
-			if(listOfFiles!=null) {
+			if(listOfItems!=null) {
 				
 				// CREATE FOLDER ELEMENT (only if folder is not empty)
-				DirectoryInfo Folder = new DirectoryInfo(path, "abc", listOfFiles.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
+				DirectoryInfo Folder = new DirectoryInfo("foldername", path, listOfItems.length);					// TODO: SPLIT FOLDER NAME FROM PATH			
 				// Scan through content
-				for (int c_subFile = 0; c_subFile < listOfFiles.length; c_subFile++) {
+				for (int c_subItem = 0; c_subItem < listOfItems.length; c_subItem++) {
 					// Found Sub-Folder
-					if (listOfFiles[c_subFile].isDirectory()) {
+					if (listOfItems[c_subItem].isDirectory()) {
+//						System.out.println("folder number "+c_subFolder);
 						// Add optional '\\' to path
 						path = FixBackslashes(path);
-						System.out.println("|+"+listOfFiles[c_subFile].getPath() + "(folder #" + (folders.size()+1) + ")");
+						System.out.println("|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
 						// Add folder to ToDo-List for later
-						folders.add(listOfFiles[c_subFile].getPath());
+						folders.add(listOfItems[c_subItem].getPath());
+						// Increase folder count
+						c_subFolder++;
 					} else {
 						// Found File - add it to list
-				    	allFiles.add(listOfFiles[c_subFile]);
+						File currentFile = listOfItems[c_subItem];
+				    	allFiles.add(currentFile);
 				    	
-				    	// APPEND FILEINFO CHILD
-				    	FileInfo File = new FileInfo(allFiles.get(c_subFile).getName(), allFiles.get(c_subFile).length());
-						System.out.println("|-"+listOfFiles[c_subFile].getPath());
+						// Command line output
+				    	String name = currentFile.getName();
+				    	long size = currentFile.length();
+						System.out.println("|-"+name);
+
 						// Add file to mother folder
-						Folder.addChild(File);
+						Folder.addChild(new FileInfo(name, size));
+						
+						// Increase file count
+						c_subFile++;
 				   	}
 				}
 				//Append newly created & filled DirectoryInfo element to results list
