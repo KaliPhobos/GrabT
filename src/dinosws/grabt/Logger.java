@@ -5,6 +5,8 @@ public class Logger {
 	// The public debug condition fields
 	// Show debug messages concerning critical input errors, causing an abort
 	public static boolean DebugShowCritical = true;
+	// Show exact trace (CallInfo) for every debug line
+	public static boolean DebugShowCallInfo = false;
 	// Show live results of initial directory scan (basically a flat file tree)
 	public static boolean DebugShowDirScanFindings = true;
 	// Shows short statistics about files and folders found during initial directory scan
@@ -12,7 +14,7 @@ public class Logger {
 	// Show all found files + their paths after initial directory scan is done
 	public static boolean DebugShowDirScanAllFiles = false;
 	// Shows creation and manipulation of Directory objects (#DirectoryInfo)
-	public static boolean DebugShowFolderObjectLog = true;
+	public static boolean DebugShowFolderObjectLog = false;
 	
 	// The last timestamp
 	private static long lastTimestamp;
@@ -34,8 +36,11 @@ public class Logger {
 		long delta = getDelta();
 		
 		// Print the formatted message
-		System.out.printf("[%d] Debug: %s (in %s)", delta, String.format(format, args), callInfo);
-		System.out.println();
+		if (DebugShowCallInfo) {
+			System.out.printf("[%d] Debug: %s (in %s)\n", delta, String.format(format, args), callInfo);
+		} else {
+			System.out.printf("[%d] Debug: %s\n", delta, String.format(format, args));
+		}
 	}
 	
 	// Perform a non-fatal assertion check and print a message and call stack on failure
