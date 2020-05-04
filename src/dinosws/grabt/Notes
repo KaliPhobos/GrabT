@@ -23,3 +23,5 @@ String mineSubtype;
 long sizeBytes;
 bool isCopied;
 }
+
+.lnk: Verknüpfung zu datei die keien executable ist? Datei priorisieren!

@@ -6,21 +6,22 @@ import java.util.ArrayList;
 // Class providing info on a directory
 public class DirectoryInfo {
 	// DirectoryInfo constructor
-	public DirectoryInfo(String folderName, String basePath, int dimension) {
+	public DirectoryInfo(String directoryName, String basePath, int dimension) {
 		// Determine the absolute base path
 		basePath = Paths.get(basePath).toAbsolutePath().toString();
 		
 		// Copy the values
-		this.folderName = folderName;
+		this.directoryName = directoryName;
 		this.basePath = basePath;
-		this.fullPath = Paths.get(basePath, folderName).toString();
+		this.fullPath = Paths.get(basePath, directoryName).toString();
 		this.children = new ArrayList<FileInfo>(dimension);				// TODO: slightly too large, decrease by the number of subfolders
 		this.score = 0;
 		this.topScore = 0;
+		General.Debug(GlobalSettings.showFolderObjectLog, "Created a new DirectoryInfo element: '"+this.directoryName+"' containing "+dimension+" child elements.");
 	}
 	
-	// The name of the folder
-	private String folderName;
+	// The name of the directory
+	private String directoryName;
 	
 	// The path to the folder without the path or folder name
 	private String basePath;
@@ -87,8 +88,7 @@ public class DirectoryInfo {
 	}
 		
 	// Recalculates the scores
-	public void calculateScores()
-	{
+	public void calculateScores() {
 		// Allocate the working variables
 		long scoreCounter = 0;
 		
@@ -96,8 +96,7 @@ public class DirectoryInfo {
 		topScore = 0;
 		
 		// Do the statistics
-		for (int i = 0; i < children.size(); i++)
-		{
+		for (int i = 0; i < children.size(); i++) {
 			// Fetch the child item and update its score
 			FileInfo child = children.get(i);
 			child.calculateScore();
@@ -118,14 +117,14 @@ public class DirectoryInfo {
 	}
 	
 	// Appends a child FileInfo object to the end of the internal list 
-	public void addChild(FileInfo info)
-	{
+	public void addChild(FileInfo info) {
 		// Add the item
 		children.add(info);
 	}
 	
 	// Fetches a FileInfo child object from the internal list 
 	public FileInfo getChild(int index) {
+		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' returned child #"+index+".");
 		// Validate the input
 		if (!childExists(index))
 			throw new IllegalArgumentException("index is out of bounds");
@@ -135,6 +134,7 @@ public class DirectoryInfo {
 	}
 	
 	public ArrayList<FileInfo> getChildren() {
+		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' returned it's children (ArrayList).");
 		return children;
 	}
 	
@@ -145,6 +145,7 @@ public class DirectoryInfo {
 	
 	// Fetches a FileInfo child object, if it exists, from the internal list
 	public void removeChild(int index) {
+		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' had it's child object #"+index+" removed.");
 		// Validate the input
 		if (!childExists(index))
 			return;
@@ -154,9 +155,9 @@ public class DirectoryInfo {
 	}
 	
 	// Clears the internal list
-	public void removeChildren()
-	{
+	public void removeChildren() {
 		children.clear();
+		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' had it's child objects removed.");
 	}
 	
 	// Returns, whether the internal list contains a specific index
@@ -166,7 +167,7 @@ public class DirectoryInfo {
 	
 	// Returns the name of the directory
 	public String getName() {
-		return folderName;
+		return directoryName;
 	}
 	
 	// Returns the full path to the parent directory
