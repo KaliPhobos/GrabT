@@ -49,10 +49,16 @@ public class FileScore {
 			// 1 - 5 GB
 			result = 10.0;
 		}
+		if (size>5000000000.0) {
+			// land-whale class files
+			result = 5.0;
+		}
 		System.out.println(size+"	 -->	"+result+"% interesting");
 		FileSizeScore = result;
 	}
 	public void calculateFileTypeScore() {
+		// *do magic*
+		FileTypeScore = 50.0;
 	}
 	public void calculateFileChangedScore() {
 	}
