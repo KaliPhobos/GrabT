@@ -35,6 +35,7 @@ public class Logger {
 		
 		// Print the formatted message
 		System.out.printf("[%d] Debug: %s (in %s)", delta, String.format(format, args), callInfo);
+		System.out.println();
 	}
 	
 	// Perform a non-fatal assertion check and print a message and call stack on failure
@@ -49,6 +50,7 @@ public class Logger {
 		
 		// Print the formatted message
 		System.out.printf("[%d] Assert: %s (in %s)", delta, String.format(format, args), callInfo);
+		System.out.println();
 	}
 	
 	// Calculate the millisecond delta and update the timestamp
