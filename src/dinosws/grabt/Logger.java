@@ -31,16 +31,17 @@ public class Logger {
 		if (!condition)
 			return;
 		
-		// Get the previous caller and delta
-		String callInfo = getPreviousCaller("%s in %s");
+		// Get the delta
 		long delta = getDelta();
 		
 		// Print the formatted message
 		if (DebugShowCallInfo) {
-			System.out.printf("[%d] Debug: %s (in %s)\n", delta, String.format(format, args), callInfo);
-		} else {
-			System.out.printf("[%d] Debug: %s\n", delta, String.format(format, args));
-		}
+			// Get the previous caller
+			String callInfo = getPreviousCaller("%s in %s");
+			System.out.printf("[%d] Debug: %s (in %s)", delta, String.format(format, args), callInfo);
+		} else
+			System.out.printf("[%d] Debug: %s", delta, String.format(format, args));
+		System.out.println();
 	}
 	
 	// Perform a non-fatal assertion check and print a message and call stack on failure
