@@ -1,7 +1,6 @@
 package dinosws.grabt;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,17 +27,16 @@ public class General {
 	public static void Analyze(List<DirectoryInfo> inFolders) {
 		// retrieve file list
 		DirectoryInfo Folder;
-		ArrayList<FileInfo> Files;
 		FileInfo File;
 		// Going through all folder elements
 		for (int c_Folder = 0; c_Folder<inFolders.size(); c_Folder++) {
 			Folder = inFolders.get(c_Folder);
-			Files = Folder.getChildren();
 			// Going through all file elements
-			for (int c_File = 0; c_File<Files.size(); c_File++) {
+			for (int c_File = 0; c_File<Folder.getChildCount(); c_File++) {
 				// Get the current file
-				File = Files.get(c_File);
-				General.Debug(GlobalSettings.showDirScanAllFiles, "File: " + File.getName() + " in folder: " + Folder.getName());
+				File = Folder.getChild(c_File);
+				Logger.debug(Logger.DebugShowDirScanAllFiles, "File: %s in folder: %s",
+						File.getName(), Folder.getName());
 				// DO FANCY STUFF HERE
 			}
 		}
@@ -68,7 +66,9 @@ public class General {
 		int c_subFolder = 0;
 		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
-			General.Debug(GlobalSettings.showDirScanFindings, "+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
+			Logger.debug(Logger.DebugShowDirScanFindings,
+					"+-- %s (item %d/%d)",
+					path, c_folders + 1, folders.size());
 			File folder = new File(path);
 			// Scan current folder
 			File[] listOfItems = folder.listFiles();
@@ -82,7 +82,9 @@ public class General {
 						folders.add(listOfItems[c_subItem].getPath());
 
 						// Command line output
-						General.Debug(GlobalSettings.showDirScanFindings, "|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
+						Logger.debug(Logger.DebugShowDirScanFindings,
+								"|+%s",
+								listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
 						
 						// Increase folder count
 						c_subFolder++;
@@ -94,7 +96,7 @@ public class General {
 						// Command line output
 				    	String name = currentFile.getName();
 				    	long size = currentFile.length();
-				    	General.Debug(GlobalSettings.showDirScanFindings, "|-"+name);
+				    	Logger.debug(Logger.DebugShowDirScanFindings, "|-%s", name);
 
 						// Add file to mother folder
 						Folder.addChild(new FileInfo(name, size));
@@ -109,53 +111,45 @@ public class General {
 			// jump to next item on the list
 			c_folders++;
 		}
-		if(c_folders!=allFiles.size()) { System.out.println("ERROR, File count does not match");}
-		General.Debug(GlobalSettings.showDirScanResults, "\nScanned a total of "+c_folders+" folders and files");
-		if (allFiles.size()==0) {
-			General.Debug(GlobalSettings.showCritical, "ERROR - No files were found, please check input parameters again (see #General>getFolderArray)");
-		}
+		
+		if (c_folders != allFiles.size())
+			System.out.println("ERROR, File count does not match");
+		
+		Logger.debug(Logger.DebugShowDirScanResults, "\nScanned a total of %d folders and files", c_folders);
+		
+		if (allFiles.size() == 0)
+			Logger.debug(Logger.DebugShowCritical,
+					"ERROR - No files were found, please check input parameters again (see #General>getFolderArray)");
+		
 		return result;
 	}
 	
+	// FIXME: Delete me and replace me with a proper path function
 	// Adds '\\' at the end of a String in case it'S not already there (fixing file paths)
 	public static String FixBackslashes(String inPath) {
-		inPath = (inPath.endsWith("\\")) ? inPath : inPath+"\\";
+		inPath = (inPath.endsWith("\\")) ? inPath : inPath + "\\";
 		return inPath;
 	}
 	
 	// Formats file sizes in a nice way you can actually work with
-	public static String FormatSize(double size) {
-		String result;
-		if (size<1000) {
-			result = (int) size+" Byte";
-		} else if(size<1000000) {
-			result = (((double) Math.round(size/10))/100)+"KB";
-		} else if(size<1000000000) {
-			result = (((double) Math.round(size/10000))/100)+"MB";
-		} else if(size<1000000000000.0) {
-			result = (((double) Math.round(size/10000000))/100)+"GB";
-		} else if(size<1000000000000000.0) {
-			result = (((double) Math.round(size/10000000000.0))/100)+"TB";
-		} else if(size<1000000000000000000.0) {
-			result = (((double) Math.round(size/10000000000000.0))/100)+"PB";
-		} else {
-			// No man should ever go there...
-			result = "fuck you";
-		}
-		return result;
+	public static String FormatSize(long size) {
+		// Check the size
+		if (size < 0x2800l) // 0 <= size < 10 KiB
+			return String.format("%d B", size);
+		else if(size < 0xA00000l) // 10 KiB <= size < 10 MiB
+			return String.format("%d KiB", size >> 20);
+		else if(size < 0x280000000l) // 10 MiB <= size < 10 GiB
+			return String.format("%d MiB", size >> 30);
+		else if(size < 0xA0000000000l) // 10 GiB <= size < 10 TiB
+			return String.format("%d GiB", size >> 40);
+		else if(size < 0x28000000000000l) // 10 TiB <= size < 10 PiB
+			return String.format("%d TiB", size >> 50);
+			
+		// No man should ever go there...
+		return "fuck you";
 	}
 	
 	public static boolean isBetween(double inMin, double inValue, double inMax) {
 		return inMin <= inValue && inValue <= inMax;
-	}
-	
-	public static void Debug(boolean isToBeShown, String inMessage) {
-		// Function used to manage debug messages. Public booleans are used to switch certain message types on and off.
-		if (isToBeShown) {
-			long timestamp = System.currentTimeMillis();
-			long diff = timestamp - LastDebugTimestamp;
-			LastDebugTimestamp = timestamp;
-			System.out.println(":"+timestamp+"("+(timestamp-InitialDebugTimestamp)+"ms|+"+diff+")> "+inMessage);
-		}
 	}
 }

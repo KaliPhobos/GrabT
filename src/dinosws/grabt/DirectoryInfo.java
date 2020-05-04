@@ -14,10 +14,14 @@ public class DirectoryInfo {
 		this.directoryName = directoryName;
 		this.basePath = basePath;
 		this.fullPath = Paths.get(basePath, directoryName).toString();
-		this.children = new ArrayList<FileInfo>(dimension);				// TODO: slightly too large, decrease by the number of subfolders
+		this.children = new ArrayList<FileInfo>(dimension);
 		this.score = 0;
 		this.topScore = 0;
-		General.Debug(GlobalSettings.showFolderObjectLog, "Created a new DirectoryInfo element: '"+this.directoryName+"' containing "+dimension+" child elements.");
+		
+		// Log the event
+		Logger.debug(Logger.DebugShowFolderObjectLog,
+				"Created a new DirectoryInfo element: '%s' containing %d child elements.",
+				directoryName, dimension);
 	}
 	
 	// The name of the directory
@@ -124,18 +128,17 @@ public class DirectoryInfo {
 	
 	// Fetches a FileInfo child object from the internal list 
 	public FileInfo getChild(int index) {
-		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' returned child #"+index+".");
+		// Log the event
+		Logger.debug(Logger.DebugShowFolderObjectLog,
+				"DirectoryInfo item for '%s' returned child #%d.",
+				directoryName, index);
+		
 		// Validate the input
 		if (!childExists(index))
 			throw new IllegalArgumentException("index is out of bounds");
 		
 		// Return the item
 		return children.get(index);
-	}
-	
-	public ArrayList<FileInfo> getChildren() {
-		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' returned it's children (ArrayList).");
-		return children;
 	}
 	
 	// Returns the number of child elements in the internal list
@@ -145,7 +148,11 @@ public class DirectoryInfo {
 	
 	// Fetches a FileInfo child object, if it exists, from the internal list
 	public void removeChild(int index) {
-		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' had it's child object #"+index+" removed.");
+		// Log the event
+		Logger.debug(Logger.DebugShowFolderObjectLog,
+				"DirectoryInfo item for '%s' had it's child object #%d removed.",
+				directoryName, index);
+		
 		// Validate the input
 		if (!childExists(index))
 			return;
@@ -157,7 +164,11 @@ public class DirectoryInfo {
 	// Clears the internal list
 	public void removeChildren() {
 		children.clear();
-		General.Debug(GlobalSettings.showFolderObjectLog, "DirectoryInfo item for '"+directoryName+"' had it's child objects removed.");
+		
+		// Log the event
+		Logger.debug(Logger.DebugShowFolderObjectLog,
+				"DirectoryInfo item for '%s' had it's child objects removed.",
+				directoryName);
 	}
 	
 	// Returns, whether the internal list contains a specific index

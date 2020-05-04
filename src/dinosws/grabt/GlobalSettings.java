@@ -10,12 +10,6 @@ public class GlobalSettings {
 	public static int FileFakeEndingWeight;
 	public static int FileFolderWeight;
 	public static int FileAmountWeight;
-	
-	public static boolean showCritical = true;		// Show debug messages concerning critical input errors, causing an abort
-	public static boolean showDirScanFindings = true;	// Show live results of initial directory scan (basically a flat file tree)
-	public static boolean showDirScanResults = true;	// Shows short statistics about files and folders found during initial directory scan
-	public static boolean showDirScanAllFiles = false;	// Show all found files + their paths after initial directory scan is done
-	public static boolean showFolderObjectLog = true;	// Shows creation and manipulation of Directory objects (#DirectoryInfo)
 
 	private static int getTotalWeight() {
 		int TotalWeight = FileSizeWeight + FileTypeWeight + FileChangedWeight;
@@ -56,7 +50,9 @@ public class GlobalSettings {
 				paramValue = FileAmountWeight;
 				break;
 			default :
-				General.Debug(showCritical, "Wrong 'paramName' value given ('"+paramName+"'), unable to comply. See '#GlobalSettings>ApplyParameterWeight'");
+				Logger.debug(Logger.DebugShowCritical,
+						"Wrong 'paramName' value given ('%s'), unable to comply. See '#GlobalSettings>ApplyParameterWeight'",
+						paramName);
 		}
 		return inScore * (paramValue / getTotalWeight());
 	}
