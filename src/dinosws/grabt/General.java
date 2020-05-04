@@ -142,4 +142,8 @@ public class General {
 		}
 		return result;
 	}
+	
+	public static boolean isBetween(double inMin, double inValue, double inMax) {
+		return inMin <= inValue && inValue <= inMax;
+	}
 }
