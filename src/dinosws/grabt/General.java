@@ -8,6 +8,10 @@ import java.util.Scanner;
 
 public class General {
 	
+	private static long InitialDebugTimestamp = System.currentTimeMillis();		// Used to measure passed time since the program was launched
+	private static long LastDebugTimestamp = System.currentTimeMillis();		// Used to measure passed time between log-worthy occurrences
+	
+	
 	// Asks for a string input and returns it
 	public static String getInput(String inMessage) {
 		String result = "ERROR";									// Default result, if this gets returned something went wrong
@@ -34,10 +38,9 @@ public class General {
 			for (int c_File = 0; c_File<Files.size(); c_File++) {
 				// Get the current file
 				File = Files.get(c_File);
-				System.out.println("File: " + File.getName() + " in folder: " + Folder.getName());
+				General.Debug(GlobalSettings.showDirScanAllFiles, "File: " + File.getName() + " in folder: " + Folder.getName());
 				// DO FANCY STUFF HERE
 			}
-
 		}
 	}
 	
@@ -60,13 +63,12 @@ public class General {
 		List<DirectoryInfo> result = new ArrayList<DirectoryInfo>();
 		folders.add(FixBackslashes(inPath));
 		String path = inPath;
-		System.out.println("----------");
 		// set counters to 0
 		int c_subFile = 0;
 		int c_subFolder = 0;
 		while (c_folders < folders.size()) {
 			path = folders.get(c_folders);
-			System.out.println("+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
+			General.Debug(GlobalSettings.showDirScanFindings, "+-- " + path + " (item "+(c_folders+1) + "/" + folders.size() + ")");
 			File folder = new File(path);
 			// Scan current folder
 			File[] listOfItems = folder.listFiles();
@@ -80,7 +82,7 @@ public class General {
 						folders.add(listOfItems[c_subItem].getPath());
 
 						// Command line output
-						System.out.println("|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
+						General.Debug(GlobalSettings.showDirScanFindings, "|+"+listOfItems[c_subItem].getPath() + "(folder #" + (folders.size()+1) + ")");
 						
 						// Increase folder count
 						c_subFolder++;
@@ -92,7 +94,7 @@ public class General {
 						// Command line output
 				    	String name = currentFile.getName();
 				    	long size = currentFile.length();
-						System.out.println("|-"+name);
+				    	General.Debug(GlobalSettings.showDirScanFindings, "|-"+name);
 
 						// Add file to mother folder
 						Folder.addChild(new FileInfo(name, size));
@@ -108,9 +110,9 @@ public class General {
 			c_folders++;
 		}
 		if(c_folders!=allFiles.size()) { System.out.println("ERROR, File count does not match");}
-		System.out.println("\nScanned a total of "+c_folders+" folders and files");
+		General.Debug(GlobalSettings.showDirScanResults, "\nScanned a total of "+c_folders+" folders and files");
 		if (allFiles.size()==0) {
-			System.out.println("ERROR - No files were found, please check input parameters again");
+			General.Debug(GlobalSettings.showCritical, "ERROR - No files were found, please check input parameters again (see #General>getFolderArray)");
 		}
 		return result;
 	}
@@ -145,5 +147,15 @@ public class General {
 	
 	public static boolean isBetween(double inMin, double inValue, double inMax) {
 		return inMin <= inValue && inValue <= inMax;
+	}
+	
+	public static void Debug(boolean isToBeShown, String inMessage) {
+		// Function used to manage debug messages. Public booleans are used to switch certain message types on and off.
+		if (isToBeShown) {
+			long timestamp = System.currentTimeMillis();
+			long diff = timestamp - LastDebugTimestamp;
+			LastDebugTimestamp = timestamp;
+			System.out.println(":"+timestamp+"("+(timestamp-InitialDebugTimestamp)+"ms|+"+diff+")> "+inMessage);
+		}
 	}
 }
